@@ -44,7 +44,8 @@ services:
       MONGO_PASS: example
       PORT: 80
       DEBUG: "True"
-      IGNORE_CACHE: "False"
+      ERASE_DB: "False"
+      AUTO_COLLECT: "False"
     volumes:
     - ./api_temperature/src:/src
     depends_on:

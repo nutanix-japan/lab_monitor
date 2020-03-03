@@ -54,9 +54,21 @@ class TemperatureClient:
     self.colh.delete_many({'host':host})
     self.colt.delete_many({'host':host})
 
-  def get_host_temperatures(self, host, limit=60*24):
-    result = self.colt.find({'host':host}, {'_id': False}).sort(
-      [('timestamp', 1)]).limit(limit)
+  def get_host_temperatures(self, host, showing_range='date'):
+    result = self.colt.find_one({'host':host}, {'_id': False}, sort=[("timestamp", -1)])
+    if result is None:
+      return []
+
+    max_timestamp = result['timestamp']
+    if showing_range == 'month':
+      min_timestamp = max_timestamp - 60 * 60 * 24 * 31
+    elif showing_range == 'week':
+      min_timestamp = max_timestamp - 60 * 60 * 24 * 7
+    else:
+      min_timestamp = max_timestamp - 60 * 60 * 24
+
+    result = self.colt.find({'host':host, 'timestamp':{"$gt": min_timestamp}},
+     {'_id': False}).sort([('timestamp', 1)])
     return get_json(result)
 
   def add_host_temperature(self, host, datetime_iso9601, temperature):

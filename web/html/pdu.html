@@ -9,7 +9,7 @@
     <script src="/static/js/bootstrap-4.3.1.bundle.min.js"></script>
     <script src="/static/js/bootstrap-4.3.1.min.js"></script>
     <script src="https://d3js.org/d3.v5.min.js"></script>
-    <script src="/static/js/temperature.js"></script>
+    <script src="/static/js/pdu.js"></script>
   </head>
 
   <body class="container">
@@ -43,27 +43,65 @@
       </div>
     </nav>
 
-    <div class="row">
-      <div class="column">
-        <h1 id="title"></h1>
+    <div class="row" style="padding-bottom: 15px">
+      <div class="col">
+        <h1>Manage PDU</h1>
       </div>
     </div>
-    
-    <div class="row">
-      <div class="column">
-        PDU Name: <select id="host_select"></select>
+
+    <div class="row" style="padding-bottom: 5px">
+      <div class="col">
+        <h3>Register New PDU</h3>
+      </div>
+    </div>
+
+    <div class="row" style="padding-bottom: 15px">
+      <div class="col-2">
+        Name:
+      </div>
+      <div class="col-3">
+        <input type="text" class="form-control">
+      </div>
+      <div class="col-2">
+        IP:
+      </div>
+      <div class="col-3">
+        <input type="text" class="form-control">
+      </div>
+      <div class="col-2">
+        <button class="btn btn-primary">Register</button> 
+      </div>
+    </div>
+
+    <div class="row" style="padding-bottom: 5px">
+      <div class="col">
+        <h3>PDU List</h3>
       </div>
     </div>
 
     <div class="row">
-      <div class="column">
-        <svg width="100%"></svg>
-      </div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">IP</th>
+            <th scope="col">Ops</th>
+          </tr>
+        </thead>
+        <tbody id="#tbody">
+          <tr>
+            <th scope="row">1</th>
+            <td>Rack1 Front</td>
+            <td>10.0.0.1</td>
+            <td><button class="btn btn-danger">Delete</button></td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-
   </body>
 
   <script>
-    init()
+
   </script>
 </html>
