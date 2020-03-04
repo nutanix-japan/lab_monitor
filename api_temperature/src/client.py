@@ -169,7 +169,7 @@ class TemperatureClient:
 
       try:
         command = f'snmpget -v 2c -c public {host_ip} 1.3.6.1.4.1.318.1.1.26.10.2.2.1.8.1'
-        response = subprocess.check_output(command).decode()
+        response = subprocess.check_output(command.split()).decode().strip()
         #response = 'SNMPv2-SMI::enterprises.318.1.1.26.10.2.2.1.8.1 = INTEGER: 329'
         words = response.split('INTEGER:')
         if len(words) != 2:
