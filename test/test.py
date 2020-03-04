@@ -24,17 +24,17 @@ def add_temperatures():
   host = result.json()[0]
   host_uuid = host['uuid']
 
-  '''
   for m in range(7, 9):
     for d in range(1, 32):
       for h in range(24):
         for mi in range(60):
           add2(host_uuid, m, d, h, mi)
-  '''
 
+  '''
   for h in range(24):
     for mi in range(60):
       add2(host_uuid, 3, 5, h, mi)
+  '''
 
 def add2(host_uuid, m, d, h, mi):
   month = str(m).zfill(2)

@@ -47,6 +47,7 @@ class TemperatureClient:
     for host in hosts:
       uuid2name[host['uuid']] = host['name'] 
 
+    # current temperature of all hosts
     for host in hosts:
       result = self.colt.find_one({'host_uuid':host['uuid']}, 
         {'_id': False}, sort=[("timestamp", -1)])
@@ -58,6 +59,7 @@ class TemperatureClient:
         host['temperature'] = result['temperature']
     hosts.sort(key=lambda x:x['name'])
 
+    # latest
     result = self.colt.find_one({}, {'_id': False}, sort=[("timestamp", -1)])
     if result is None:
       return {
@@ -73,18 +75,21 @@ class TemperatureClient:
         'month_name':'',
       }
 
+    # calc 24h-ago, 1week-ago, 1month-ago
     max_timestamp = result['timestamp']
     month_ago_timestamp = max_timestamp - 60 * 60 * 24 * 31
     week_ago_timestamp = max_timestamp - 60 * 60 * 24 * 7
     day_ago_timestamp = max_timestamp - 60 * 60 * 24
 
+    # get max heat on 3 ranges
     month_result = self.colt.find_one({'timestamp':{"$gt": month_ago_timestamp}},
-     {'_id': False}, sort=[("temperature", -1)])
+     {'_id': False}, sort=[("temperature", -1), ("timestamp", -1)])
     week_result = self.colt.find_one({'timestamp':{"$gt": week_ago_timestamp}},
-     {'_id': False}, sort=[("temperature", -1)])
+     {'_id': False}, sort=[("temperature", -1), ("timestamp", -1)])
     day_result = self.colt.find_one({'timestamp':{"$gt": day_ago_timestamp}},
-     {'_id': False}, sort=[("temperature", -1)])
+     {'_id': False}, sort=[("temperature", -1), ("timestamp", -1)])
 
+    # create return value
     d = {
       'hosts':hosts,
       'day_max':day_result['temperature'],
@@ -163,11 +168,9 @@ class TemperatureClient:
       host_ip = host['ip']
 
       try:
-        '''
         command = f'snmpget -v 2c -c public {host_ip} 1.3.6.1.4.1.318.1.1.26.10.2.2.1.8.1'
         response = subprocess.check_output(command).decode()
-        '''
-        response = 'SNMPv2-SMI::enterprises.318.1.1.26.10.2.2.1.8.1 = INTEGER: 329'
+        #response = 'SNMPv2-SMI::enterprises.318.1.1.26.10.2.2.1.8.1 = INTEGER: 329'
         words = response.split('INTEGER:')
         if len(words) != 2:
           continue
