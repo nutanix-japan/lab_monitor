@@ -14,33 +14,66 @@ TClient = client.TemperatureClient(host, port, username, password,
                                   erase_db, auto_collect)
 app = FastAPI()
 
+#############
+## summary ##
+#############
+
+@app.get("/api/temperature/v1/summary/")
+async def get_hosts():
+  return TClient.get_summary()
+
+###########
+## hosts ##
+###########
+
 @app.get("/api/temperature/v1/hosts/")
 async def get_hosts():
   return TClient.get_hosts()
 
-@app.put("/api/temperature/v1/hosts/{host_name}")
-async def put_hosts(host_name:str):
-  TClient.add_host(host_name)
-  return TClient.get_hosts()
-
-@app.delete("/api/temperature/v1/hosts/{host_name}")
-async def delete_hosts(host_name:str):
-  TClient.rm_host(host_name)
-  return TClient.get_hosts()
-
-@app.get("/api/temperature/v1/temperatures/{host_name}")
-async def get_temperatures(host_name:str, showing_range:str='day'):
-  return TClient.get_host_temperatures(host_name, showing_range)
-
-@app.put("/api/temperature/v1/temperatures/{host_name}")
-async def put_temperatures(request:Request, host_name:str):
+@app.put("/api/temperature/v1/hosts/")
+async def put_hosts(request:Request):
   try:
     j = await request.json()
-    host = host_name
+    name = j['name']
+    ip = j['ip']
+  except Exception as e:
+    print(e)
+    raise fastapi.HTTPException(status_code=400, detail='Json Decode Error')
+  TClient.add_host(name, ip)
+  return TClient.get_hosts()
+
+@app.delete("/api/temperature/v1/hosts/{host_uuid}")
+async def delete_hosts(host_uuid:str):
+  TClient.rm_host(host_uuid)
+  return TClient.get_hosts()
+
+##################
+## temperatures ##
+##################
+
+@app.get("/api/temperature/v1/temperatures/{host_uuid}")
+async def get_temperatures(host_uuid:str, showing_range:str='day'):
+  return TClient.get_host_temperatures(host_uuid, showing_range)
+
+@app.put("/api/temperature/v1/temperatures/")
+async def put_temperatures(request:Request):
+  try:
+    j = await request.json()
+    host_uuid = j['host_uuid']
     datetime_iso9601 = j['datetime']
     temperature = j['temperature']
   except Exception as e:
     print(e)
     raise fastapi.HTTPException(status_code=400, detail='Json Decode Error')
-  TClient.add_host_temperature(host_name, datetime_iso9601, temperature)
+  TClient.add_host_temperature(host_uuid, datetime_iso9601, temperature)
   return {}
+
+#######################
+## all for delete db ##
+#######################
+
+@app.delete("/api/temperature/v1/all/")
+async def delete_all():
+  TClient.rm_all()
+  return {}
+  

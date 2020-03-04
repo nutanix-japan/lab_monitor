@@ -20,7 +20,9 @@ var init = function(){
 
 var add_hosts_to_select = function(hosts){
   for (const host of hosts){
-    var html = '<option value="' + host + '">' + host + '</option>'
+    var host_uuid = host['uuid']
+    var host_name = host['name']
+    var html = '<option value="' + host_uuid + '">' + host_name + '</option>'
     $("#host_select").append(html)
   }
 
@@ -38,8 +40,8 @@ var draw = function(){
     var showing_range = 'day'
   }
 
-  var val = $("#host_select option:selected").val()
-  var url = '/api/temperature/v1/temperatures/' + val + '?showing_range=' + showing_range
+  var host_uuid = $("#host_select option:selected").val()
+  var url = '/api/temperature/v1/temperatures/' + host_uuid + '?showing_range=' + showing_range
   $.ajax({type:'get', url:url,
     success:function(j, status, xhr){
       loaded(j, showing_range)
@@ -65,7 +67,10 @@ var loaded = function(dataset, showing_range){
   var timeparser = d3.timeParse("%s");
 
   dataset = dataset.map(function(d){
-    return  { datetime: timeparser(d.timestamp), temperature:d.temperature } ;
+    return  { 
+      datetime: timeparser(d.timestamp), 
+      temperature:d.temperature 
+    } ;
   });
 
   var xScale = d3.scaleTime()

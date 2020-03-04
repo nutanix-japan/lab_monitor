@@ -9,7 +9,7 @@
     <script src="/static/js/bootstrap-4.3.1.bundle.min.js"></script>
     <script src="/static/js/bootstrap-4.3.1.min.js"></script>
     <script src="https://d3js.org/d3.v5.min.js"></script>
-    <script src="/static/js/temperature.js"></script>
+    <script src="/static/js/summary.js"></script>
   </head>
 
   <body class="container">
@@ -27,43 +27,118 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
-          <li class="nav-item active">
-            <a class="nav-link" href="/?showing_range=day">Today</a>
+          <li class="nav-item" id="nav-summary">
+            <a class="nav-link" href="/">Summary</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/?showing_range=week">This week</a>
+          <li class="nav-item" id="nav-day">
+            <a class="nav-link" href="/graph.html?showing_range=day">Today</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/?showing_range=month">This month</a>
+          <li class="nav-item" id="nav-week">
+            <a class="nav-link" href="/graph.html?showing_range=week">This week</a>
           </li>
-          <li class="nav-item">
+          <li class="nav-item" id="nav-month">
+            <a class="nav-link" href="/graph.html?showing_range=month">This month</a>
+          </li>
+          <li class="nav-item" id="nav-pdu">
             <a class="nav-link" href="/pdu.html">Manage PDU</a>
           </li>
         </ul>
       </div>
     </nav>
 
-    <div class="row">
+    <div class="row" style="padding-bottom: 15px">
       <div class="column">
-        <h1 id="title"></h1>
+        <h1 >History</h1>
+      </div>
+    </div>
+
+    <div class="row" style="padding-bottom: 15px">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Range</th>
+            <th scope="col">Max Temperature</th>
+            <th scope="col">Timestamp</th>
+            <th scope="col">Sensor Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Today</th>
+            <td id="day_max"></td>
+            <td id="day_timestamp"></td>
+            <td id="day_name"></td>
+          </tr>
+          <tr>
+            <th scope="row">This week</th>
+            <td id="week_max"></td>
+            <td id="week_timestamp"></td>
+            <td id="week_name"></td>
+          </tr>
+          <tr>
+            <th scope="row">This month</th>
+            <td id="month_max"></td>
+            <td id="month_timestamp"></td>
+            <td id="month_name"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+
+    <div class="row" style="padding-bottom: 15px">
+      <div class="column">
+        <h1 >Current status</h1>
       </div>
     </div>
     
     <div class="row">
-      <div class="column">
-        PDU Name: <select id="host_select"></select>
-      </div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Sensor Name</th>
+            <th scope="col">IP</th>
+            <th scope="col">Temperature</th>
+            <th scope="col">Latest Timestamp</th>
+          </tr>
+        </thead>
+        <tbody id="tbody_summary">
+        </tbody>
+      </table>
     </div>
 
-    <div class="row">
-      <div class="column">
-        <svg width="100%"></svg>
-      </div>
-    </div>
-
+    <script>
+      init()
+    </script>
   </body>
 
   <script>
-    init()
+    $('#nav-summary').removeClass("active");
+    $('#nav-day').removeClass("active");
+    $('#nav-week').removeClass("active");
+    $('#nav-month').removeClass("active");
+    $('#nav-pdu').removeClass("active");
+
+    switch(window.location.pathname + window.location.search){
+      case '/':
+      case '/index.html':
+        $('#nav-summary').addClass("active");
+        break
+      case '/graph.html?showing_range=day':
+        $('#nav-day').addClass("active");
+        break
+      case '/graph.html?showing_range=week':
+        $('#nav-week').addClass("active");
+        break
+      case '/graph.html?showing_range=month':
+        $('#nav-month').addClass("active");
+        break
+      case '/pdu.html':
+        $('#nav-pdu').addClass("active");
+        break      
+      default:
+        console.log('url error')
+    }
   </script>
 </html>
